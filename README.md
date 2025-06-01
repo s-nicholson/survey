@@ -15,7 +15,7 @@ The app uses serverless components to collect survey responses, persist them, an
 ## Config
 
 Config is in DynamoDB in the form:
-```json
+```js
 {
   id: "surveyId",
   pin: "surveyPin",
