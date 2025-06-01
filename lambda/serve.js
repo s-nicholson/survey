@@ -153,7 +153,7 @@ function resultsContent(qs, dataUrl) {
                             .html({
                                 some: '<strong>%filter-count</strong> selected out of <strong>%total-count</strong> records' +
                                     ' | <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a>',
-                                all: 'All records selected. Please click on the graphs to apply filters.'
+                                all: 'All <strong>%total-count</strong> records selected. Please click on the graphs to apply filters.'
                             });
 
                         dc.renderAll();

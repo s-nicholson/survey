@@ -22,7 +22,7 @@ exports.handler = async sqsEvent => {
             const responseFile = qs.filename;
 
             // Fetch from S3
-            const originalResponseArray = await readResponses(qs.responseFile);
+            const originalResponseArray = await readResponses(responseFile);
             
             // Append to list
             console.log(`Before: ${originalResponseArray.length}`);
