@@ -27,7 +27,9 @@ Config is in DynamoDB in the form:
       label: "Question Label",
       options: [
         "A", "B", "C"
-      ]
+      ],
+      defaultVal: "A" // optional,
+      order: 1 // optional
     },
     ...
   ]

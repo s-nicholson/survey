@@ -34,14 +34,26 @@ exports.handler = async lambdaEvent => {
 }
 
 function surveyContent(qs) {
+    const description = qs.description
+        ? `
+        <div class="row">
+            <p>${qs.description}</p>
+        </div>
+        `
+        : "";
     return basicPage(qs.name, `
-        <h1>${qs.name}</h1>
-        <form id="questions">
-            ${questions(qs.questions)}
-            <button type="button"
-                class="btn btn-primary"
-                onclick="send()">Submit</button>
-        </form>
+        <div class="row">
+            <h1>${qs.name}</h1>
+        </div>
+        ${description}
+        <div class="row">
+            <form id="questions">
+                ${questions(qs.questions)}
+                <button type="button"
+                    class="btn btn-primary"
+                    onclick="send()">Submit</button>
+            </form>
+        </div>
         <script>
             function send() {
                 let answersObj = {};
@@ -85,6 +97,14 @@ function resultsContent(qs, dataUrl) {
     qs.questions.forEach(q => {
         titleMap[q.id] = q.label;
     });
+
+    const description = qs.resultsDescription
+    ? `
+    <div class="row">
+        <p>${qs.resultsDescription}</p>
+    </div>
+    `
+    : "";
 
     return `
     <html>
@@ -186,8 +206,14 @@ function resultsContent(qs, dataUrl) {
         </head>
         <body>
             <div id="container" class="container">
-                <h1>${qs.name}</h1>
-                <div class="dc-data-count dc-chart"></div>
+                <div class="row">
+                    <h1>${qs.name}</h1>
+                </div>
+                ${description}
+                <div class="row">
+                    <div class="dc-data-count dc-chart">
+                    </div>
+                </div>
             </div>
         </body>
     </html>

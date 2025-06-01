@@ -29,9 +29,11 @@ exports.basicPage = (title, body) => {
 exports.questions = (questionList) => {
     const questionHtml = [];
 
-    questionList.forEach(q => {
-        questionHtml.push(question(q.id, q.label, q.options, q.defaultVal));
-    });
+    questionList
+        .sort((a, b) => (parseInt(a.order) || 0) - (parseInt(b.order) || 0))
+        .forEach(q => {
+            questionHtml.push(question(q.id, q.label, q.options, q.defaultVal));
+        });
 
     return `${questionHtml.join("")}`;
 };

@@ -37,10 +37,14 @@ exports.handler = async lambdaEvent => {
         const response = await client.send(command);
         console.log(`SQS response: ${JSON.stringify(response)}`);
 
+        const resultLink = `<a href=\\"/prod/results?surveyId=${id}&pin=${pin}\\">here</a>.`
+        const message = `Check out the aggregated response data ${resultLink}` +
+            "<br/>Responses are processed asynchronously, so it might take a few minutes for your answers to be included.";
+
         return makeResponse(200, `
             { 
                 "header": "Thanks for sharing!",
-                "message": "Check out the aggregated response data <a href=\\"/prod/results?surveyId=${id}&pin=${pin}\\">here</a>."
+                "message": "${message}"
             }`,
             'application/json'
         );
