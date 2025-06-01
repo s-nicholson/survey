@@ -1,14 +1,25 @@
-# Welcome to your CDK TypeScript project
+# Surveys
 
-This is a blank project for CDK development with TypeScript.
+Simple config-driven survey app which generates a multi-choice questionnaire and then allows simple exploration of the results data using DC.js
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Config
 
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+Config is in DynamoDB in the form:
+```json
+{
+  id: "surveyId",
+  pin: "surveyPin",
+  name: "Display Name",
+  filename: "Key for results file on S3",
+  questions: [
+    {
+      id: "questionId",
+      label: "Question Label",
+      options: [
+        "A", "B", "C"
+      ]
+    },
+    ...
+  ]
+}
+```
