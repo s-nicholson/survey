@@ -21,7 +21,7 @@ exports.handler = async lambdaEvent => {
             case "/survey":
                 return makeResponse(200, surveyContent(qs));
             case "/results":
-                const dataUrl = await getS3Url(id);
+                const dataUrl = await getS3Url(qs.filename);
                 return makeResponse(200, resultsContent(qs, dataUrl));
         }
     } catch (e) {
