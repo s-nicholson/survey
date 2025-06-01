@@ -17,12 +17,13 @@ exports.handler = async lambdaEvent => {
             throw new Error("Invalid params");
         }
 
-        // TODO validate based on expected schema for survey?
-        if (!body.response instanceof Object) {
+        // Validate based on expected schema for survey
+        const error = validateResponse(qs.questions, body.response);
+        if (error) {
             return makeResponse(400, `
                 { 
                     "header": "Invalid response!",
-                    "message": "That response didn't look right."
+                    "message": "That response didn't look right: ${error}"
                 }`,
                 'application/json'
             );
@@ -56,5 +57,26 @@ exports.handler = async lambdaEvent => {
             }`,
             'application/json'
         );
+    }
+}
+
+function validateResponse(questions, answers) {
+    const numAnswers = Object.keys(answers).length;
+    if (numAnswers != questions.length) {
+        return "Wrong number of answers";
+    }
+    for (const [qId, answer] of Object.entries(answers)) {
+        let found = false;
+        for (const q of questions) {
+            if (q.id == qId) {
+                found = true;
+                if (!q.options.includes(answer)) {
+                    return "Invalid answer to question";
+                }
+            }
+        }
+        if (!found) {
+            return "Answer to a question we didn't ask";
+        }
     }
 }
