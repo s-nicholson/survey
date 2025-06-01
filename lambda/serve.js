@@ -1,6 +1,6 @@
-const { makeResponse, basicPage, questions } = require("./util");
-const { validateParams } = require("./params");
-const { getSurvey } = require("./db");
+const { makeResponse, basicPage, questions } = require("./lib/util");
+const { validateParams } = require("./lib/params");
+const { getSurvey } = require("./lib/db");
 
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
@@ -185,8 +185,8 @@ function resultsContent(qs, dataUrl) {
             <title>${qs.name}</title>
         </head>
         <body>
-            <h1>${qs.name}</h1>
             <div id="container" class="container">
+                <h1>${qs.name}</h1>
                 <div class="dc-data-count dc-chart"></div>
             </div>
         </body>

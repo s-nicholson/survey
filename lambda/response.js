@@ -1,6 +1,6 @@
-const { makeResponse } = require("./util");
-const { validateParams } = require("./params");
-const { getSurvey } = require("./db");
+const { makeResponse } = require("./lib/util");
+const { validateParams } = require("./lib/params");
+const { getSurvey } = require("./lib/db");
 
 const { SendMessageCommand, SQSClient } = require("@aws-sdk/client-sqs");
 

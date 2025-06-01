@@ -1,5 +1,5 @@
 const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
-const { getSurvey } = require("./db");
+const { getSurvey } = require("./lib/db");
 
 const s3 = new S3Client();
 
