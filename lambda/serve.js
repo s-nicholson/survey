@@ -136,10 +136,11 @@ function resultsContent(surveyDefinition, dataUrl) {
 
                         // Define dimensions
                         const allKeys = getAllKeys(data);
+                        allKeys.delete("submissionDate");
+
                         const dimensions = getDimensions(cf, allKeys);
 
                         // Define charts
-
                         Object.keys(dimensions).forEach(k => {
                             const container = document.getElementById("container");
 
@@ -183,7 +184,7 @@ function resultsContent(surveyDefinition, dataUrl) {
                             const keys = new Set();
                             data.forEach(e => 
                                 Object.keys(e)
-                                .forEach(k => keys.add(k)));
+                                    .forEach(k => keys.add(k)));
                             return keys;
                         }
 

@@ -29,7 +29,7 @@ exports.handler = async lambdaEvent => {
             );
         }
         
-        await sendtoSqs(JSON.stringify(body));
+        await sendtoSqs(body);
 
         const resultLink = `<a href=\\"/prod/results?surveyId=${id}&pin=${pin}\\">here</a>.`
         const message = `Check out the aggregated response data ${resultLink}` +
@@ -74,7 +74,12 @@ function validateResponse(questions, answers) {
     }
 }
 
-async function sendtoSqs(sqsMessage) {
+async function sendtoSqs(surveyResponse) {
+    const submissionDate = new Date().toJSON();
+    const sqsMessage = JSON.stringify({
+        ...surveyResponse,
+        submissionDate
+    });
     console.log(`Writing message to SQS: ${sqsMessage}`);
     const command = new SendMessageCommand({
         QueueUrl: process.env.QUEUE_URL,
