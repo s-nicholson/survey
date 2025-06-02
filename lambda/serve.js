@@ -12,17 +12,17 @@ exports.handler = async lambdaEvent => {
         const { id, pin } = validateParams(lambdaEvent.queryStringParameters);
 
         // Fetch survey data from db
-        const qs = await getSurvey(id);
-        if (!qs || pin != qs.pin) {
+        const surveyDefinition = await getSurvey(id);
+        if (!surveyDefinition || pin != surveyDefinition.pin) {
             throw new Error("Invalid params");
         }
 
         switch (lambdaEvent.path) {
             case "/survey":
-                return makeResponse(200, surveyContent(qs));
+                return makeResponse(200, surveyContent(surveyDefinition));
             case "/results":
-                const dataUrl = await getS3Url(qs.filename);
-                return makeResponse(200, resultsContent(qs, dataUrl));
+                const dataUrl = await getS3Url(surveyDefinition.filename);
+                return makeResponse(200, resultsContent(surveyDefinition, dataUrl));
         }
     } catch (e) {
         return makeResponse(401, basicPage(`Error`, `
@@ -33,22 +33,22 @@ exports.handler = async lambdaEvent => {
     }
 }
 
-function surveyContent(qs) {
-    const description = qs.description
+function surveyContent(surveyDefinition) {
+    const description = surveyDefinition.description
         ? `
         <div class="row">
-            <p>${qs.description}</p>
+            <p>${surveyDefinition.description}</p>
         </div>
         `
         : "";
-    return basicPage(qs.name, `
+    return basicPage(surveyDefinition.name, `
         <div class="row">
-            <h1>${qs.name}</h1>
+            <h1>${surveyDefinition.name}</h1>
         </div>
         ${description}
         <div class="row">
             <form id="questions">
-                ${questions(qs.questions)}
+                ${questions(surveyDefinition.questions)}
                 <button type="button"
                     class="btn btn-primary"
                     onclick="send()">Submit</button>
@@ -92,16 +92,16 @@ function surveyContent(qs) {
     `);
 }
 
-function resultsContent(qs, dataUrl) {
+function resultsContent(surveyDefinition, dataUrl) {
     const titleMap = {};
-    qs.questions.forEach(q => {
-        titleMap[q.id] = q.label;
+    surveyDefinition.questions.forEach(question => {
+        titleMap[question.id] = question.label;
     });
 
-    const description = qs.resultsDescription
+    const description = surveyDefinition.resultsDescription
     ? `
     <div class="row">
-        <p>${qs.resultsDescription}</p>
+        <p>${surveyDefinition.resultsDescription}</p>
     </div>
     `
     : "";
@@ -202,12 +202,12 @@ function resultsContent(qs, dataUrl) {
                     });
                 });
             </script>
-            <title>${qs.name}</title>
+            <title>${surveyDefinition.name}</title>
         </head>
         <body>
             <div id="container" class="container">
                 <div class="row">
-                    <h1>${qs.name}</h1>
+                    <h1>${surveyDefinition.name}</h1>
                 </div>
                 ${description}
                 <div class="row">
@@ -220,12 +220,12 @@ function resultsContent(qs, dataUrl) {
     `;
 }
 
-async function getS3Url(key) {
+async function getS3Url(filename) {
     const expiresInSeconds = 60 * 5; // e.g., 5 minutes
 
     const command = new GetObjectCommand({
         Bucket: process.env.BUCKET,
-        Key: key
+        Key: filename
     });
 
     const signedUrl = await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });

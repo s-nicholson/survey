@@ -12,13 +12,13 @@ exports.handler = async lambdaEvent => {
         const { id, pin } = validateParams(body);
 
         // Fetch survey data from db
-        const qs = await getSurvey(id);
-        if (!qs || pin != qs.pin) {
+        const surveyDefinition = await getSurvey(id);
+        if (!surveyDefinition || pin != surveyDefinition.pin) {
             throw new Error("Invalid params");
         }
 
         // Validate based on expected schema for survey
-        const error = validateResponse(qs.questions, body.response);
+        const error = validateResponse(surveyDefinition.questions, body.response);
         if (error) {
             return makeResponse(400, `
                 { 
@@ -29,14 +29,7 @@ exports.handler = async lambdaEvent => {
             );
         }
         
-        const sqsMessage = JSON.stringify(body);
-        console.log(`Writing message to SQS: ${sqsMessage}`);
-        const command = new SendMessageCommand({
-            QueueUrl: process.env.QUEUE_URL,
-            MessageBody: sqsMessage
-        });
-        const response = await client.send(command);
-        console.log(`SQS response: ${JSON.stringify(response)}`);
+        await sendtoSqs(JSON.stringify(body));
 
         const resultLink = `<a href=\\"/prod/results?surveyId=${id}&pin=${pin}\\">here</a>.`
         const message = `Check out the aggregated response data ${resultLink}` +
@@ -79,4 +72,14 @@ function validateResponse(questions, answers) {
             return "Answer to a question we didn't ask";
         }
     }
+}
+
+async function sendtoSqs(sqsMessage) {
+    console.log(`Writing message to SQS: ${sqsMessage}`);
+    const command = new SendMessageCommand({
+        QueueUrl: process.env.QUEUE_URL,
+        MessageBody: sqsMessage
+    });
+    const response = await client.send(command);
+    console.log(`SQS response: ${JSON.stringify(response)}`);
 }

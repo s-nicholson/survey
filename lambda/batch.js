@@ -15,11 +15,11 @@ exports.handler = async sqsEvent => {
     
     for (const [surveyId, msgList] of Object.entries(messagesPerSurvey)) {
         // Fetch survey from DB
-        const qs = await getSurvey(surveyId);
-        if (!qs) {
+        const surveyDefinition = await getSurvey(surveyId);
+        if (!surveyDefinition) {
             console.error(`Unknown survey ID will be skipped: ${surveyId}`);
         } else {
-            const responseFile = qs.filename;
+            const responseFile = surveyDefinition.filename;
 
             // Fetch from S3
             const originalResponseArray = await readResponses(responseFile);
