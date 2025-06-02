@@ -2,7 +2,11 @@
 
 Simple config-driven survey app which generates a multi-choice questionnaire and then allows simple exploration of the results data using DC.js
 
-## Architecture
+I wanted to figure out if we can easily build an alternative to a SaaS survey platform for this - partially to keep control of submission data.
+
+> This is a very MVP solution, but it seems to hang together.
+
+## Design
 
 The app uses serverless components to collect survey responses, persist them, and display the results:
 
@@ -12,7 +16,7 @@ The app uses serverless components to collect survey responses, persist them, an
 * Results page is served via the `serve` lambda - this creates a presigned URL for the results data file, and builds it into the returned HTML page.
   * This page loads the results data into DC.js and renders charts for exploration.
 
-## Config
+### Config
 
 Config is in DynamoDB in the form:
 ```js

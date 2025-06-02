@@ -14,7 +14,7 @@ exports.handler = async lambdaEvent => {
         // Fetch survey data from db
         const surveyDefinition = await getSurvey(id);
         if (!surveyDefinition || pin != surveyDefinition.pin) {
-            throw new Error("Invalid params");
+            throw new Error("Invalid survey id or pin");
         }
 
         switch (lambdaEvent.path) {
