@@ -16,11 +16,11 @@ exports.handler = async lambdaEvent => {
         // Validate based on expected schema for survey
         const error = validateResponse(surveyDefinition.questions, body.response);
         if (error) {
-            return makeResponse(400, `
+            return makeResponse(400,
                 { 
                     "header": "Invalid response!",
-                    "message": "That response didn't look right: ${error}"
-                }`,
+                    "message": `That response didn't look right: ${error}`
+                },
                 'application/json'
             );
         }
@@ -31,19 +31,19 @@ exports.handler = async lambdaEvent => {
         const message = `Check out the aggregated response data ${resultLink}` +
             "<br/>Responses are processed asynchronously, so it might take a few minutes for your answers to be included.";
 
-        return makeResponse(200, `
+        return makeResponse(200,
             { 
                 "header": "Thanks for sharing!",
-                "message": "${message}"
-            }`,
+                "message": message
+            },
             'application/json'
         );
     } catch (e) {
-        return makeResponse(401, `
+        return makeResponse(401,
             { 
                 "header": "Unauthorised!",
-                "message": "${e.message}"
-            }`,
+                "message": e.message
+            },
             'application/json'
         );
     }
