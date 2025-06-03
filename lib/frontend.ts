@@ -18,6 +18,15 @@ export class Frontend extends Construct {
 
     // Lambda to serve the frontend pages
     const serveFn = new NodejsFunction(this, "Serve", {
+      bundling: {
+        commandHooks: {
+          afterBundling: (inputDir: string, outputDir: string): string[] => [
+            `cp -R ${inputDir}/lambda/templates ${outputDir}`,
+          ],
+          beforeBundling: (_inputDir: string, _outputDir: string): string[] => [],
+          beforeInstall: (_inputDir: string, _outputDir: string): string[] => [],
+        },
+      },
       runtime: Runtime.NODEJS_20_X,
       entry: "lambda/serve.js",
       environment: {

@@ -1,0 +1,48 @@
+<div class="row">
+  <h1>{{name}}</h1>
+</div>
+{{ #if (description) }}
+<div class="row">
+  <p>{{description}}</p>
+</div>
+{{ /if }}
+<div class="row">
+  <form id="questions">
+    {{questions}}
+    <button type="button" class="btn btn-primary" onclick="send()">Submit</button>
+  </form>
+</div>
+<script type="text/javascript">
+  function send() {
+    let answersObj = {};
+    let form = document.getElementById("questions");
+    let answers = new FormData(form);
+    answers.forEach((value, key) => (answersObj[key] = value));
+
+    fetch("/prod/response", {
+      method: "POST",
+      body: JSON.stringify(
+        {
+          "surveyId": "{{id}}",
+          "pin": "{{pin}}",
+          "response": answersObj
+        }
+      ),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        let header = "<h1>" + data.header + "</h1>";
+        let message = "<p>" + data.message + "</p>"
+
+        let newContent = header + message;
+        document.getElementById("container").innerHTML = newContent;
+      })
+      .catch(err => {
+        alert("Oops. That didn't work. Please try again.");
+        console.log(err);
+      });
+  }
+</script>
