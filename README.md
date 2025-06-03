@@ -2,9 +2,14 @@
 
 Simple config-driven survey app which generates a multi-choice questionnaire and then allows simple exploration of the results data using DC.js
 
-I wanted to figure out if we can easily build an alternative to a SaaS survey platform for this - partially to keep control of submission data.
+I wanted to figure out if we can easily build an alternative to a SaaS survey platform for this, the things I wanted from the solution were:
 
-> This is a very MVP solution, but it seems to hang together.
+* keep control of response data,
+* allow anonymous responses,
+  * but still at least prevent *anyone* from responding,
+* allow anyone who contributes to see the results.
+
+> This is a very MVP solution, I've cut a pile of corners, but it seems to hang together.
 
 ## Design
 
