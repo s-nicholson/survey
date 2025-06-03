@@ -1,7 +1,5 @@
-const { S3Client, GetObjectCommand, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSurvey } = require("./lib/db");
-
-const s3 = new S3Client();
+const { readResponseFile, writeResponseFile } = require("./lib/store");
 
 exports.handler = async sqsEvent => {
     const messagesPerSurvey = {};
@@ -22,7 +20,7 @@ exports.handler = async sqsEvent => {
             const responseFile = surveyDefinition.filename;
 
             // Fetch from S3
-            const originalResponseArray = await readResponses(responseFile);
+            const originalResponseArray = await readResponseFile(responseFile);
             
             // Append to list
             console.log(`Before: ${originalResponseArray.length}`);
@@ -30,33 +28,8 @@ exports.handler = async sqsEvent => {
             console.log(`After: ${newResponseArray.length}`);
         
             // Write back to S3
-            const writeResponse = await writeResponses(responseFile, newResponseArray);
+            const writeResponse = await writeResponseFile(responseFile, newResponseArray);
             console.log(writeResponse);
         }
     }
 };
-
-async function readResponses(key) {
-    try {
-        const command = new GetObjectCommand({
-            Bucket: process.env.BUCKET,
-            Key: key
-        });
-        const response = await s3.send(command);
-        const responsBody = await response.Body.transformToString();
-        return JSON.parse(responsBody);
-    } catch (err) {
-        return [];
-    }
-}
-
-async function writeResponses(key, responses) {
-    const command = new PutObjectCommand({
-        Bucket: process.env.BUCKET,
-        Key: key,
-        Body: JSON.stringify(responses)
-    });
-
-    const response = await s3.send(command);
-    return response;
-}

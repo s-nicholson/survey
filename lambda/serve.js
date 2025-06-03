@@ -1,11 +1,7 @@
+const { getSurvey } = require("./lib/db");
+const { getResponseFileUrl } = require("./lib/store");
 const { makeResponse, validateParams } = require("./lib/util");
 const { basicPage, questions, renderTemplate } = require("./lib/ui");
-const { getSurvey } = require("./lib/db");
-
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
-
-const s3 = new S3Client();
 
 exports.handler = async lambdaEvent => {
     try {
@@ -21,7 +17,7 @@ exports.handler = async lambdaEvent => {
             case "/survey":
                 return makeResponse(200, surveyContent(surveyDefinition));
             case "/results":
-                const dataUrl = await getS3Url(surveyDefinition.filename);
+                const dataUrl = await getResponseFileUrl(surveyDefinition.filename);
                 return makeResponse(200, resultsContent(surveyDefinition, dataUrl));
         }
     } catch (e) {
@@ -58,15 +54,3 @@ function resultsContent(surveyDefinition, dataUrl) {
         description: surveyDefinition.description,
     });
 }
-
-async function getS3Url(filename) {
-    const expiresInSeconds = 60 * 5; // e.g., 5 minutes
-
-    const command = new GetObjectCommand({
-        Bucket: process.env.BUCKET,
-        Key: filename
-    });
-
-    const signedUrl = await getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
-    return signedUrl;
-};

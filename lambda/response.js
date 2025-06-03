@@ -1,9 +1,6 @@
-const { makeResponse, validateParams } = require("./lib/util");
 const { getSurvey } = require("./lib/db");
-
-const { SendMessageCommand, SQSClient } = require("@aws-sdk/client-sqs");
-
-const client = new SQSClient({});
+const { sendMessage } = require("./lib/queue");
+const { makeResponse, validateParams } = require("./lib/util");
 
 exports.handler = async lambdaEvent => {
     try {
@@ -28,7 +25,7 @@ exports.handler = async lambdaEvent => {
             );
         }
         
-        await sendtoSqs(body);
+        await sendMessage(body);
 
         const resultLink = `<a href=\\"/prod/results?surveyId=${id}&pin=${pin}\\">here</a>.`
         const message = `Check out the aggregated response data ${resultLink}` +
@@ -71,19 +68,4 @@ function validateResponse(questions, answers) {
             return "Answer to a question we didn't ask";
         }
     }
-}
-
-async function sendtoSqs(surveyResponse) {
-    const responseDate = new Date().toJSON();
-    const sqsMessage = JSON.stringify({
-        ...surveyResponse,
-        responseDate
-    });
-    console.log(`Writing message to SQS: ${sqsMessage}`);
-    const command = new SendMessageCommand({
-        QueueUrl: process.env.QUEUE_URL,
-        MessageBody: sqsMessage
-    });
-    const response = await client.send(command);
-    console.log(`SQS response: ${JSON.stringify(response)}`);
 }
