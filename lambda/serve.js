@@ -136,7 +136,7 @@ function resultsContent(surveyDefinition, dataUrl) {
 
                         // Define dimensions
                         const allKeys = getAllKeys(data);
-                        allKeys.delete("submissionDate");
+                        allKeys.delete("responseDate");
 
                         const dimensions = getDimensions(cf, allKeys);
 

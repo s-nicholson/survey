@@ -1,8 +1,9 @@
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
-import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { Bucket } from "aws-cdk-lib/aws-s3";
 import { Queue } from "aws-cdk-lib/aws-sqs";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 
 export type FrontendProps = {
@@ -16,10 +17,9 @@ export class Frontend extends Construct {
     super(scope, id);
 
     // Lambda to serve the frontend pages
-    const serveFn = new Function(this, "Serve", {
+    const serveFn = new NodejsFunction(this, "Serve", {
       runtime: Runtime.NODEJS_20_X,
-      handler: "serve.handler",
-      code: Code.fromAsset("lambda"),
+      entry: "lambda/serve.js",
       environment: {
         BUCKET: props.bucket.bucketName,
         TABLE: props.table.tableName
@@ -30,10 +30,9 @@ export class Frontend extends Construct {
     props.bucket.grantRead(serveFn);
 
     // Lambda to send responses to SQS
-    const responseFn = new Function(this, "Response", {
+    const responseFn = new NodejsFunction(this, "Response", {
       runtime: Runtime.NODEJS_20_X,
-      handler: "response.handler",
-      code: Code.fromAsset("lambda"),
+      entry: "lambda/response.js",
       environment: {
         QUEUE_URL: props.queue.queueUrl,
         TABLE: props.table.tableName

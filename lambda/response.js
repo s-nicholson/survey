@@ -75,10 +75,10 @@ function validateResponse(questions, answers) {
 }
 
 async function sendtoSqs(surveyResponse) {
-    const submissionDate = new Date().toJSON();
+    const responseDate = new Date().toJSON();
     const sqsMessage = JSON.stringify({
         ...surveyResponse,
-        submissionDate
+        responseDate
     });
     console.log(`Writing message to SQS: ${sqsMessage}`);
     const command = new SendMessageCommand({

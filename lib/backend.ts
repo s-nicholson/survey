@@ -1,10 +1,11 @@
 import { Bucket } from "aws-cdk-lib/aws-s3";
-import { Code, Function, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { Construct } from "constructs";
 import { Queue } from "aws-cdk-lib/aws-sqs";
 import { Duration } from "aws-cdk-lib";
 import { TableV2 } from "aws-cdk-lib/aws-dynamodb";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 
 export type BackendProps = {
   table: TableV2,
@@ -17,10 +18,9 @@ export class Backend extends Construct {
     super(scope, id);
 
     // Lambda to offload SQS responses to S3
-    const batchFn = new Function(this, "Batch", {
+    const batchFn = new NodejsFunction(this, "Batch", {
       runtime: Runtime.NODEJS_20_X,
-      handler: "batch.handler",
-      code: Code.fromAsset("lambda"),
+      entry: "lambda/batch.js",
       reservedConcurrentExecutions: 1,
       environment: {
         BUCKET: props.bucket.bucketName,
