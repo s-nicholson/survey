@@ -27,7 +27,7 @@ exports.handler = async lambdaEvent => {
         
         await sendMessage(body);
 
-        const resultLink = `<a href=\\"/prod/results?surveyId=${id}&pin=${pin}\\">here</a>.`
+        const resultLink = `<a href="/prod/results?surveyId=${id}&pin=${pin}">here</a>.`
         const message = `Check out the aggregated response data ${resultLink}` +
             "<br/>Responses are processed asynchronously, so it might take a few minutes for your answers to be included.";
 
