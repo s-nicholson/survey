@@ -1,9 +1,10 @@
-const { getSurvey } = require("./lib/db");
-const { getResponseFileUrl } = require("./lib/store");
-const { makeResponse } = require("./lib/util");
-const { basicPage, questions, renderTemplate } = require("./lib/ui");
+import { getSurvey } from "./lib/db";
+import { getResponseFileUrl } from "./lib/store";
+import { makeResponse } from "./lib/util";
+import { basicPage, questions, renderTemplate } from "./lib/ui";
+import { QuestionDefinition, SurveyDefinition } from "./lib/types";
 
-exports.handler = async lambdaEvent => {
+export const handler = async (lambdaEvent: any): Promise<any> => {
     try {
         const { surveyId, pin } = lambdaEvent.queryStringParameters;
 
@@ -20,7 +21,7 @@ exports.handler = async lambdaEvent => {
                 const dataUrl = await getResponseFileUrl(surveyDefinition.filename);
                 return makeResponse(200, resultsContent(surveyDefinition, dataUrl));
         }
-    } catch (e) {
+    } catch (e: any) {
         return makeResponse(401, basicPage(`Error`, `
                 <h1>Oops</h1>
                 <p>${e.message}</p>
@@ -29,7 +30,7 @@ exports.handler = async lambdaEvent => {
     }
 }
 
-function surveyContent(surveyDefinition) {
+function surveyContent(surveyDefinition: SurveyDefinition) {
     return basicPage(surveyDefinition.name, 
         renderTemplate("survey", {
             id: surveyDefinition.id,
@@ -41,9 +42,9 @@ function surveyContent(surveyDefinition) {
     );
 }
 
-function resultsContent(surveyDefinition, dataUrl) {
-    const titleMap = {};
-    surveyDefinition.questions.forEach(question => {
+function resultsContent(surveyDefinition: SurveyDefinition, dataUrl: string) {
+    const titleMap: { [key: string]: string } = {};
+    surveyDefinition.questions.forEach((question: QuestionDefinition) => {
         titleMap[question.id] = question.label;
     });
 

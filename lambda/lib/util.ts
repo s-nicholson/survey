@@ -1,4 +1,4 @@
-exports.makeResponse = (status, body, contentType = 'text/html') => {
+export const makeResponse = (status: number, body: string | object, contentType = 'text/html') => {
     return {
         "statusCode": status,
         "body": typeof body == "object" ? JSON.stringify(body) : body,

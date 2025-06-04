@@ -1,8 +1,9 @@
-const { SendMessageCommand, SQSClient } = require("@aws-sdk/client-sqs");
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
+import { SurveyResponse } from "./types";
 
-const client = new SQSClient({});
+const sqsClient = new SQSClient({});
 
-exports.sendMessage = async (surveyResponse) => {
+export const sendMessage = async (surveyResponse: SurveyResponse): Promise<void> => {
   const responseDate = new Date().toJSON();
   const sqsMessage = JSON.stringify({
       ...surveyResponse,
@@ -13,6 +14,6 @@ exports.sendMessage = async (surveyResponse) => {
       QueueUrl: process.env.QUEUE_URL,
       MessageBody: sqsMessage
   });
-  const response = await client.send(command);
+  const response = await sqsClient.send(command);
   console.log(`SQS response: ${JSON.stringify(response)}`);
 }

@@ -29,7 +29,7 @@ export class Frontend extends Construct {
         },
       },
       runtime: Runtime.NODEJS_20_X,
-      entry: "lambda/serve.js",
+      entry: "lambda/serve.ts",
       environment: {
         BUCKET: props.bucket.bucketName,
         TABLE: props.table.tableName
@@ -42,7 +42,7 @@ export class Frontend extends Construct {
     // Lambda to send responses to SQS
     const responseFn = new NodejsFunction(this, "Response", {
       runtime: Runtime.NODEJS_20_X,
-      entry: "lambda/response.js",
+      entry: "lambda/response.ts",
       environment: {
         QUEUE_URL: props.queue.queueUrl,
         TABLE: props.table.tableName

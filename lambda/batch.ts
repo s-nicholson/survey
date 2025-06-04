@@ -1,10 +1,14 @@
-const { getSurvey } = require("./lib/db");
-const { readResponseFile, writeResponseFile } = require("./lib/store");
+import { getSurvey } from "./lib/db";
+import { readResponseFile, writeResponseFile } from "./lib/store";
+import { SurveyResponse } from "./lib/types";
 
-exports.handler = async sqsEvent => {
-    const messagesPerSurvey = {};
+type ResponseMap = {
+    [surveyId: string]: SurveyResponse[]
+};
+export const handler = async (sqsEvent: any): Promise<any> => {
+    const messagesPerSurvey: ResponseMap = {};
     // Group messages by survey ID
-    sqsEvent.Records.forEach(msg => {
+    sqsEvent.Records.forEach((msg: any) => {
         const msgObj = JSON.parse(msg.body);
         const id = msgObj.surveyId;
         messagesPerSurvey[id] = messagesPerSurvey[id] || [];

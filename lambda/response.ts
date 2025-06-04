@@ -1,10 +1,11 @@
-const { getSurvey } = require("./lib/db");
-const { sendMessage } = require("./lib/queue");
-const { makeResponse } = require("./lib/util");
+import { getSurvey } from  "./lib/db";
+import { sendMessage } from  "./lib/queue";
+import { makeResponse } from  "./lib/util";
+import { SurveyAnswers, QuestionDefinition, SurveyResponse } from "./lib/types";
 
-exports.handler = async lambdaEvent => {
+export const handler = async (lambdaEvent: any): Promise<any> => {
     try {
-        const body = JSON.parse(lambdaEvent.body);
+        const body: SurveyResponse = JSON.parse(lambdaEvent.body);
         const { surveyId, pin } = body;
 
         // Fetch survey data from db
@@ -38,7 +39,7 @@ exports.handler = async lambdaEvent => {
             },
             'application/json'
         );
-    } catch (e) {
+    } catch (e: any) {
         return makeResponse(401,
             { 
                 "header": "Unauthorised!",
@@ -49,7 +50,7 @@ exports.handler = async lambdaEvent => {
     }
 }
 
-function validateResponse(questions, answers) {
+function validateResponse(questions: QuestionDefinition[], answers: SurveyAnswers): string | void {
     const numAnswers = Object.keys(answers).length;
     if (numAnswers != questions.length) {
         return "Wrong number of answers";

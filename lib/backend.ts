@@ -20,7 +20,7 @@ export class Backend extends Construct {
     // Lambda to offload SQS responses to S3
     const batchFn = new NodejsFunction(this, "Batch", {
       runtime: Runtime.NODEJS_20_X,
-      entry: "lambda/batch.js",
+      entry: "lambda/batch.ts",
       reservedConcurrentExecutions: 1,
       environment: {
         BUCKET: props.bucket.bucketName,
