@@ -1,14 +1,14 @@
 const { getSurvey } = require("./lib/db");
 const { getResponseFileUrl } = require("./lib/store");
-const { makeResponse, validateParams } = require("./lib/util");
+const { makeResponse } = require("./lib/util");
 const { basicPage, questions, renderTemplate } = require("./lib/ui");
 
 exports.handler = async lambdaEvent => {
     try {
-        const { id, pin } = validateParams(lambdaEvent.queryStringParameters);
+        const { surveyId, pin } = lambdaEvent.queryStringParameters;
 
         // Fetch survey data from db
-        const surveyDefinition = await getSurvey(id);
+        const surveyDefinition = await getSurvey(surveyId);
         if (!surveyDefinition || pin != surveyDefinition.pin) {
             throw new Error("Invalid survey id or pin");
         }

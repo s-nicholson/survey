@@ -1,14 +1,14 @@
 const { getSurvey } = require("./lib/db");
 const { sendMessage } = require("./lib/queue");
-const { makeResponse, validateParams } = require("./lib/util");
+const { makeResponse } = require("./lib/util");
 
 exports.handler = async lambdaEvent => {
     try {
         const body = JSON.parse(lambdaEvent.body);
-        const { id, pin } = validateParams(body);
+        const { surveyId, pin } = body;
 
         // Fetch survey data from db
-        const surveyDefinition = await getSurvey(id);
+        const surveyDefinition = await getSurvey(surveyId);
         if (!surveyDefinition || pin != surveyDefinition.pin) {
             throw new Error("Invalid survey id or pin");
         }
@@ -27,7 +27,7 @@ exports.handler = async lambdaEvent => {
         
         await sendMessage(body);
 
-        const resultLink = `<a href="/prod/results?surveyId=${id}&pin=${pin}">here</a>.`
+        const resultLink = `<a href="/prod/results?surveyId=${surveyId}&pin=${pin}">here</a>.`
         const message = `Check out the aggregated response data ${resultLink}` +
             "<br/>Responses are processed asynchronously, so it might take a few minutes for your answers to be included.";
 
