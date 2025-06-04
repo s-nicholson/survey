@@ -40,7 +40,7 @@
             div.innerHTML = `
               <div id="${k}Chart" class="dc-chart">
                   <strong>${titles[k]}</strong>
-                  <a class="reset" href="javascript:charts.\${k}.filterAll();dc.redrawAll();"
+                  <a class="reset" href="javascript:charts.${k}.filterAll();dc.redrawAll();"
                       style="display: none;">reset</a>
                   <div class="clearfix">
                   </div>
